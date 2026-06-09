@@ -49,4 +49,28 @@ class CmsWsPage(BasePage):
         self.input_password(password)
         self.click_confirm()
 
-    # 補成功畫面、錯誤資訊、空白內容的顯示
+    # IP、USERNAME、PASSWORD 為空欄位
+    def get_field_error(self, field):
+        return self.driver.find_element(*field).get_attribute("error")
+
+    def is_ip_required_error(self):
+        return self.get_field_error(self.IP) == "這個欄位不能是空的"
+
+    def is_ip_format_error(self):
+        return self.get_field_error(self.IP) == "IP位址不正確"
+
+    def is_username_required_error(self):
+        return self.get_field_error(self.USERNAME) == "這個欄位不能是空的"
+
+    def is_password_required_error(self):
+        return self.get_field_error(self.PASSWORD) == "這個欄位不能是空的"
+
+    def get_login_error(self):
+        # 這裡是整體 login fail（username/password錯）
+        return self.driver.find_element(
+            By.XPATH,
+            "//*[contains(@text, '使用者名稱或密碼錯誤')]"
+        ).text
+
+
+    # 補成功畫面、錯誤資訊(OK)、空白內容的顯示(OK)、跳出的dialog
