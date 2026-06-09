@@ -1,56 +1,58 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from utils.base_page import BasePage
 
 
 class SettingPage(BasePage):
 
-    # 返回鍵
+    # 共用導航
     BACK_BTN = (By.ID, "com.cayintech.cmswsplayer:id/left_btn")
-
-    # tab
     PLAYBACK_TAB = (By.ID, "com.cayintech.cmswsplayer:id/playback")
     ADVANCE_TAB = (By.ID, "com.cayintech.cmswsplayer:id/advance")
+    MENU_BTN = (By.ID, "com.cayintech.cmswsplayer:id/right_btn")
+    # TODO
+    # open_menu()
+    # open_reset_pin()
+    # open_privacy_policy()
+    # open_terms()
 
-    # form fields
-    MODEL = (By.ID, "com.cayintech.cmswsplayer:id/model_spinner")
-    PROTOCOL = (By.ID, "com.cayintech.cmswsplayer:id/protocol_spinner")
-    IP = (By.ID, "com.cayintech.cmswsplayer:id/ip_edit_text")
-    PORT = (By.ID, "com.cayintech.cmswsplayer:id/port_edit_text")
-    USERNAME = (By.ID, "com.cayintech.cmswsplayer:id/username_edit_text")
+    # 共用入口
+    PRODUCT_MODEL_SPINNER = (By.ID, "com.cayintech.cmswsplayer:id/text1")
 
     # actions
     def click_back(self):
         self.click(self.BACK_BTN)
 
-    def switch_to_playback(self):
-        self.click(self.PLAYBACK_TAB)
+    def switch_tab(self, tab_name):
+        tabs = {
+            "playback": self.PLAYBACK_TAB,
+            "advance": self.ADVANCE_TAB,
+        }
 
-    def switch_to_advance(self):
-        self.click(self.ADVANCE_TAB)
+        if tab_name not in tabs:
+            raise ValueError(f"Unknown tab: {tab_name}")
 
-    # input actions
-    def set_ip(self, ip):
-        self.find(self.IP).clear()
-        self.find(self.IP).send_keys(ip)
+        self.click(tabs[tab_name])
 
-    def set_port(self, port):
-        self.find(self.PORT).clear()
-        self.find(self.PORT).send_keys(port)
+    def select_model(self, model_name):
+        self.click(self.PRODUCT_MODEL_SPINNER)
 
-    def set_username(self, username):
-        self.find(self.USERNAME).clear()
-        self.find(self.USERNAME).send_keys(username)
+        option = (
+            By.XPATH,
+            f"//android.widget.ListView//android.widget.TextView[@text='{model_name}']"
+        )
 
-    def is_page_displayed(self):
-        try:
-            WebDriverWait(self.driver, 5).until(
-                EC.presence_of_element_located(self.BACK_BTN)
-            )
-            return True
-        except:
-            return False
+        self.wait_for(option)
+        self.click(option)
 
-    def get_title(self):
-        return self.get_text(self.TITLE)
+    def open_menu(self):
+        self.click(self.MENU_BTN)
+
+    def select_menu_item(self, item_name):
+        self.open_menu()
+
+        option = (
+            By.XPATH,
+            f"//android.widget.TextView[@text='{item_name}']"
+        )
+
+        self.click(option)
