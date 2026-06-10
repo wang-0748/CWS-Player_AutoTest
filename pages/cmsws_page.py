@@ -1,10 +1,12 @@
 from selenium.webdriver.common.by import By
+from appium.webdriver.common.appiumby import AppiumBy
 from utils.base_page import BasePage
+from components.dialog import Dialog
 
 
 class CmsWsPage(BasePage):
     # CMS-WS 專屬
-    PROTOCOL = (By.ID, "com.cayintech.cmswsplayer:id/text1")
+    PROTOCOL = (By.ID, "com.cayintech.cmswsplayer:id/protocol_spinner")
     IP = (By.ID, "com.cayintech.cmswsplayer:id/ip_edit_text")
     PORT = (By.ID, "com.cayintech.cmswsplayer:id/port_edit_text")
     USERNAME = (By.ID, "com.cayintech.cmswsplayer:id/username_edit_text")
@@ -41,36 +43,62 @@ class CmsWsPage(BasePage):
     def click_play(self):
         self.click(self.PLAYBACK_BTN)
 
+    def trigger_validation(self, locator):
+        self.click(locator)
+
+    # 往下滑動作
+    def scroll_to_element(self, locator):
+        by, value = locator
+
+        self.driver.find_element(
+            AppiumBy.ANDROID_UIAUTOMATOR,
+            f'new UiScrollable(new UiSelector().scrollable(true))'
+            f'.scrollIntoView(new UiSelector().resourceId("{value}"))'
+        )
+    # 登入
     def login(self, protocol, ip, port, username, password):
         self.select_protocol(protocol)
         self.input_ip(ip)
         self.input_port(port)
+        self.scroll_to_element(self.PASSWORD)
         self.input_username(username)
         self.input_password(password)
         self.click_confirm()
 
-    # IP、USERNAME、PASSWORD 為空欄位
+    # IP、USERNAME、PASSWORD 錯誤資訊、空白內容的顯示
     def get_field_error(self, field):
-        return self.driver.find_element(*field).get_attribute("error")
+        return self.driver.find_element(*field).text
 
     def is_ip_required_error(self):
-        return self.get_field_error(self.IP) == "這個欄位不能是空的"
+        return "這個欄位不能是空的" in self.driver.page_source
 
     def is_ip_format_error(self):
-        return self.get_field_error(self.IP) == "IP位址不正確"
+        return "IP位址不正確" in self.driver.page_source
 
     def is_username_required_error(self):
-        return self.get_field_error(self.USERNAME) == "這個欄位不能是空的"
+        return "這個欄位不能是空的" in self.driver.page_source
+
+    def is_username_format_error(self):
+        return "使用者名稱或密碼錯誤" in self.driver.page_source
 
     def is_password_required_error(self):
-        return self.get_field_error(self.PASSWORD) == "這個欄位不能是空的"
+        return "這個欄位不能是空的" in self.driver.page_source
 
-    def get_login_error(self):
-        # 這裡是整體 login fail（username/password錯）
-        return self.driver.find_element(
-            By.XPATH,
-            "//*[contains(@text, '使用者名稱或密碼錯誤')]"
-        ).text
+    def is_password_format_error(self):
+        return "使用者名稱或密碼錯誤" in self.driver.page_source
 
+    # 補成功畫面、
 
-    # 補成功畫面、錯誤資訊(OK)、空白內容的顯示(OK)、跳出的dialog
+    # 跳出的dialog
+    def __init__(self, driver):
+        super().__init__(driver)
+        self.dialog = Dialog(driver)
+
+    def is_error_dialog_shown(self):
+        return self.dialog.is_visible()
+
+    def get_error_dialog_text(self):
+        return self.dialog.get_content_text()
+
+    def close_error_dialog(self):
+        self.dialog.close()

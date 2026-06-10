@@ -1,42 +1,50 @@
 from selenium.webdriver.common.by import By
+from appium.webdriver.common.appiumby import AppiumBy
 from utils.base_page import BasePage
 
 
 class CmsWsMainPage(BasePage):
 
-    GROUP = (By.ID, "com.cayintech.cmswsplayer:id/group_spinner")
-    HOSTNAME = (By.ID, "com.cayintech.cmswsplayer:id/hostname_edit_text")
+    CHANGE_BTN = (By.ID, "com.cayintech.cmswsplayer:id/change_btn")
+    GROUP_SPINNER = (By.ID, "com.cayintech.cmswsplayer:id/group_spinner")
+    HOSTNAME_INPUT = (By.ID, "com.cayintech.cmswsplayer:id/hostname_edit_text")
     PLAY_BTN = (By.ID, "com.cayintech.cmswsplayer:id/play_btn")
 
-    def select_group(self, group_name):
-        self.click(self.GROUP)
-        self.click_text((By.ID, "android:id/text1"), group_name)
+    # ===== Actions =====
 
-    def enter_hostname(self, hostname):
-        self.input_text(self.HOSTNAME, hostname)
+    def click_change(self):
+        self.click(self.CHANGE_BTN)
 
     def click_play(self):
         self.click(self.PLAY_BTN)
 
-    def is_page_displayed(self):
-        return self.is_displayed(self.PLAY_BTN)
+    def trigger_validation(self, locator):
+        self.click(locator)
 
-# class CmsWsMainPage(BasePage):
-#
-#     # CMS-WS 第二狀態 UI
-#     GROUP
-#     HOSTNAME
-#     PLAY_BTN
-#     CHANGE_BTN
-#
-#     # 仍可能保留
-#     BACK_BTN
-#     PLAYBACK_TAB
-#     ADVANCE_TAB
-#     PRODUCT_MODEL_SPINNER
-#
-#     # actions
-#     select_group()
-#     enter_hostname()
-#     click_play()
-#     click_change()
+    # 往下滑動作
+    def scroll_to_element(self, locator):
+        by, value = locator
+
+        self.driver.find_element(
+            AppiumBy.ANDROID_UIAUTOMATOR,
+            f'new UiScrollable(new UiSelector().scrollable(true))'
+            f'.scrollIntoView(new UiSelector().resourceId("{value}"))'
+        )
+
+    def select_group(self, group_name):
+        self.click(self.GROUP_SPINNER)
+        option = (By.XPATH, f"//android.widget.TextView[@text='{group_name}']")
+        self.scroll_to_element(option)
+        self.click(option)
+
+    def input_hostname(self, hostname):
+        self.input_text(self.HOSTNAME_INPUT, hostname)
+
+    def is_hostname_required_error(self):
+        return "這個欄位不能是空的" in self.driver.page_source
+
+    # 流程
+    def change_group_and_hostname(self, group, hostname):
+        self.select_group(group)
+        self.input_hostname(hostname)
+        self.click_change()
