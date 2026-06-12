@@ -4,7 +4,7 @@ from utils.base_page import BasePage
 from components.dialog import Dialog
 
 
-class CmsWsPage(BasePage):
+class CmsBasePage(BasePage):
     # CMS-WS 專屬
     PROTOCOL = (By.ID, "com.cayintech.cmswsplayer:id/protocol_spinner")
     IP = (By.ID, "com.cayintech.cmswsplayer:id/ip_edit_text")

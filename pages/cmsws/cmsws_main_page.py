@@ -47,4 +47,8 @@ class CmsWsMainPage(BasePage):
     def change_group_and_hostname(self, group, hostname):
         self.select_group(group)
         self.input_hostname(hostname)
-        self.click_change()
+        self.click_play()
+
+    # 驗證正確
+    def is_page_displayed(self):
+        pass

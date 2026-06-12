@@ -56,3 +56,6 @@ class SettingPage(BasePage):
         )
 
         self.click(option)
+
+    def is_page_displayed(self):
+        return self.is_displayed(self.PRODUCT_MODEL_SPINNER)

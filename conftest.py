@@ -1,8 +1,8 @@
 import pytest
-from pages.home_page import HomePage
-from pages.password_page import PasswordPage
+from pages.common.home_page import HomePage
+from pages.common.password_page import PasswordPage
 from utils.driver_factory import create_driver
-from pages.setting_page import SettingPage
+from pages.common.setting_page import SettingPage
 
 @pytest.fixture
 def driver():
