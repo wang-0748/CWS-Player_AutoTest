@@ -3,7 +3,6 @@ from appium.webdriver.common.appiumby import AppiumBy
 from utils.base_page import BasePage
 from components.dialog import Dialog
 
-
 class CmsBasePage(BasePage):
     # CMS-WS 專屬
     PROTOCOL = (By.ID, "com.cayintech.cmswsplayer:id/protocol_spinner")

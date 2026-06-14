@@ -20,13 +20,12 @@ def test_login_success(driver):
 
     page.login(
         protocol="HTTP",
-        ip="172.16.20.146",
+        ip="192.168.100.7",
         port="80",
         username="administrator",
         password="admin"
     )
     page_main = CmsWsMainPage(driver)
-
     page_main.change_group_and_hostname("Player","hostname")
 
 # def test_dialog_success(driver):

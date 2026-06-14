@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
 from appium.webdriver.common.appiumby import AppiumBy
 from utils.base_page import BasePage
-
+import time
 
 class CmsWsMainPage(BasePage):
 
@@ -21,7 +21,7 @@ class CmsWsMainPage(BasePage):
     def trigger_validation(self, locator):
         self.click(locator)
 
-    # 往下滑動作
+    # 往下滑動作(找完後不要加點擊的動作，很容易因為畫面還沒穩定，導致點擊失敗)
     def scroll_to_element(self, locator):
         by, value = locator
 
@@ -34,7 +34,6 @@ class CmsWsMainPage(BasePage):
     def select_group(self, group_name):
         self.click(self.GROUP_SPINNER)
         option = (By.XPATH, f"//android.widget.TextView[@text='{group_name}']")
-        self.scroll_to_element(option)
         self.click(option)
 
     def input_hostname(self, hostname):
@@ -45,8 +44,9 @@ class CmsWsMainPage(BasePage):
 
     # 流程
     def change_group_and_hostname(self, group, hostname):
-        self.select_group(group)
+        self.scroll_to_element(self.GROUP_SPINNER)
         self.input_hostname(hostname)
+        self.select_group(group)
         self.click_play()
 
     # 驗證正確
