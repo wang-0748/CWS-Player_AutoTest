@@ -1,7 +1,6 @@
 from selenium.webdriver.common.by import By
 from appium.webdriver.common.appiumby import AppiumBy
 from utils.base_page import BasePage
-import time
 
 class CmsWsMainPage(BasePage):
 

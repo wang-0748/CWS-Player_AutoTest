@@ -1,6 +1,15 @@
+import copy
+
 from pages.common.setting_page import SettingPage
 from pages.cmsws.cmsws_page import CmsWsPage
 from pages.cmsws.cmsws_main_page import CmsWsMainPage
+
+# 直接拿test_data裡面的資料來使用
+from config.cmsws_base.test_data import BASE_ACCOUNT
+from config.cmsws_base.test_data import INVALID_USERNAME, INVALID_PASSWORD, EMPTY, BAD_IP
+
+# 機器人驗證使用方式
+from pages.gocayin.login_page import LoginPage
 # def test_setting_page(driver):
 #     page = SettingPage(driver)
 #
@@ -55,3 +64,27 @@ def test_login_success(driver):
 #     )
 #     page.trigger_validation(page.USERNAME)
 #     assert page.is_username_required_error()
+
+# config 正確資料標準用法
+def test_dialog_success(driver):
+    page = CmsWsPage(driver)
+    page.login(**BASE_ACCOUNT)
+
+# config 替換錯誤資料標使用法
+def test_login_invalid_username(driver):
+    data = copy.deepcopy(BASE_ACCOUNT)
+    data["username"] = INVALID_USERNAME
+
+    page = CmsWsPage(driver)
+    page.login(**data)
+
+# 機器人驗證使用方式
+def wait_manual_captcha():
+    input("請完成 reCAPTCHA，完成後按 Enter...")
+
+def test_login(driver):
+    login = LoginPage(driver)
+
+    login.login("admin", "admin")
+
+    wait_manual_captcha()
