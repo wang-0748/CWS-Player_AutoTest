@@ -1,12 +1,23 @@
+from appium.webdriver.common.appiumby import AppiumBy
+from selenium.webdriver.common.by import By
 from utils.base_page import BasePage
+
 
 class LoginPage(BasePage):
 
-    EMAIL = ("id", "email")
-    PASSWORD = ("id", "password")
-    LOGIN_BTN = ("text", "登入")
+    EMAIL = (AppiumBy.XPATH,"//android.widget.EditText[@resource-id='email']")
+    PASSWORD = (AppiumBy.XPATH,"//android.widget.EditText[@resource-id='password']")
+    LOGIN_BTN = (AppiumBy.XPATH,"//android.widget.Button[@text='Login']")
+
+    def wait_login_page(self):
+        self.wait_for(self.EMAIL)
 
     def login(self, user, pwd):
-        self.find(self.EMAIL).send_keys(user)
-        self.find(self.PASSWORD).send_keys(pwd)
-        self.find(self.LOGIN_BTN).click()
+        print("開始輸入 Email")
+        self.input_text(self.EMAIL, user)
+
+        print("開始輸入 Password")
+        self.input_text(self.PASSWORD, pwd)
+
+    def click_login_btn(self):
+        self.click(self.LOGIN_BTN)

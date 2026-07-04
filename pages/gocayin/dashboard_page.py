@@ -8,6 +8,7 @@ class DashboardPage(BasePage):
     CONTENT_SPINNER = (By.ID, "com.cayintech.cmswsplayer:id/content_spinner")
     ACCOUNT_TEXT = (By.ID, "com.cayintech.cmswsplayer:id/account_text")
     ACCOUNT_STATUS = (By.ID, "com.cayintech.cmswsplayer:id/account_status_text")
+    DEVICE_STATUS = (By.ID, "com.cayintech.cmswsplayer:id/registergocayin_btn")
     LOGOUT_BTN = (By.ID, "com.cayintech.cmswsplayer:id/logout_btn")  # 如果有
 
     def is_loaded(self):
@@ -16,8 +17,11 @@ class DashboardPage(BasePage):
     def get_account_name(self):
         return self.find(self.ACCOUNT_TEXT).text
 
-    def get_login_status(self):
+    def get_login_account_status(self):
         return self.find(self.ACCOUNT_STATUS).text
+
+    def get_login_device_status(self):
+        return self.find(self.DEVICE_STATUS).text
 
     def select_content_type(self, content_name: str):
         spinner = self.wait.until(EC.element_to_be_clickable(self.CONTENT_SPINNER))
