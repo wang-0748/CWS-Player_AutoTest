@@ -30,8 +30,15 @@ class SettingPage(BasePage):
 
         if tab_name not in tabs:
             raise ValueError(f"Unknown tab: {tab_name}")
-
         self.click(tabs[tab_name])
+
+        # 🎯 關鍵修改：當切換到 advance 時，直接回傳進階頁面的物件
+        if tab_name == "advance":
+            from pages.common.setting_advance_page import SettingAdvancePage
+            return SettingAdvancePage(self.driver)
+
+        return self
+
 
     def select_model(self, model_name):
         self.click(self.PRODUCT_MODEL_SPINNER)
