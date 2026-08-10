@@ -21,8 +21,8 @@ def test_login(driver):
     login.wait_login_page()
 
     login.login(
-        "cayintechqa0002@gmail.com",
-        "Aa000000"
+        "hankruan@cayintech.com",
+        "Cayin1234"
     )
     input("請完成機器人驗證後按 Enter 繼續...")
 

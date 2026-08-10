@@ -20,6 +20,12 @@ class DashboardPage(BasePage):
     def is_loaded(self):
         return self.wait.until(EC.presence_of_element_located(self.ACCOUNT_STATUS))
 
+    def is_dashboard_displayed(self):
+        try:
+            return self.is_displayed(self.ACCOUNT_STATUS)  # 或直接 return self.is_loaded()
+        except Exception:
+            return False
+
     def get_account_name(self):
         return self.get_text(self.ACCOUNT_TEXT)
 
