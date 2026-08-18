@@ -74,21 +74,41 @@ def logged_in_driver(driver):
 
     yield driver
 
+# 生成 Allure 報告 & 失敗自動截圖
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     """測試失敗時自動擷取手機螢幕並附於 Allure 報告中"""
     outcome = yield
     report = outcome.get_result()
 
-    if report.when == "call" and report.failed:
-        driver = item.funcargs.get("logged_in_driver") or item.funcargs.get("driver")
+    # 只針對執行（call）階段且結果為失敗（failed）的案例進行截圖
+    if report.failed:
+        driver = None
+
+        # 1. 優先從測試案例傳入的參數中找 driver
+        for arg in item.funcargs.values():
+            if hasattr(arg, "get_screenshot_as_png"):
+                driver = arg
+                break
+
+        # 2. 若 setup 階段出錯 (例如 logged_in_driver 壞掉)，嘗試從 session 級別的 fixture 抓取 driver
+        if not driver and hasattr(item, "_request"):
+            try:
+                driver = item._request.getfixturevalue("driver")
+            except Exception:
+                driver = None
+
+        # 3. 執行截圖並附加到 Allure 報告
         if driver:
             try:
                 screenshot = driver.get_screenshot_as_png()
+                stage_name = "前置準備 (Setup)" if report.when == "setup" else "測試執行 (Call)"
                 allure.attach(
                     screenshot,
-                    name="失敗當下手機畫面",
+                    name=f"💥 [{stage_name}] 失敗當下畫面截圖",
                     attachment_type=allure.attachment_type.PNG,
                 )
+                print(f"\n［Hook］已成功將 [{stage_name}] 失敗畫面附加至 Allure 報告！")
             except Exception as e:
                 print(f"\n［Hook］截圖失敗: {e}")
+
